@@ -63,6 +63,7 @@ public class login extends HttpServlet {
 		try {
 			
 			//fa.enderecoInserir(endereco);
+			fa.tipoUsuarioInserir(t);
 			e = fa.enderecoGet(25);
 			usuario.setEndereco(e);
 			fa.usuarioInserir(usuario);

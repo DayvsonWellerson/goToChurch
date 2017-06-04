@@ -15,6 +15,7 @@ public class TesteUnitarioArea extends TestCase {
 
 			Area area = new Area();
 			RNArea rnArea = new RNArea();
+			area.setNumeroIdentificador("");
 			rnArea.verificaPreenchimento(area);
 	}
 	
@@ -23,6 +24,7 @@ public class TesteUnitarioArea extends TestCase {
 
 			Area area = new Area();
 			RNArea rnArea = new RNArea();
+			area.setNumeroIdentificador("");
 			rnArea.verificaPreenchimento(area);
 	}
 	

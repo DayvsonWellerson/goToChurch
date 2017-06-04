@@ -7,10 +7,12 @@ import basica.Area;
 import basica.Congregacao;
 import basica.Endereco;
 import basica.Setor;
+import basica.TipoUsuario;
 import negocio.RNArea;
 import negocio.RNCongregacao;
 import negocio.RNEndereco;
 import negocio.RNSetor;
+import negocio.RNTipoUsuario;
 import negocio.RNUsuario;
 import util.DadosException;
 import util.NegocioException;
@@ -22,6 +24,7 @@ public class Fachada {
 	RNEndereco rnEndereco;
 	RNSetor rnSetor;
 	RNUsuario rnUsuario;
+	RNTipoUsuario rnTipoUsuario;
 
 	public Fachada() {
 		this.rnArea = new RNArea();
@@ -29,6 +32,7 @@ public class Fachada {
 		this.rnEndereco = new RNEndereco();
 		this.rnSetor = new RNSetor();
 		this.rnUsuario = new RNUsuario();
+		this.rnTipoUsuario = new RNTipoUsuario();
 
 		try {
 			Class.forName("org.postgresql.Driver");
@@ -177,5 +181,9 @@ public class Fachada {
 	 * ################################################ ## Congregacao
 	 * ################################################
 	 */
+	
+	public void tipoUsuarioInserir(TipoUsuario tu) throws NegocioException, DadosException {
+		rnTipoUsuario.inserirTipoUsuario(tu);
+	}
 
 }
