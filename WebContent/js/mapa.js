@@ -9,7 +9,7 @@
 
 
   //OBS Json deve ser montado com dados do DB
-  var markersData = [
+  /*var markersData = [
   {
       lat: -8.151265, 
       lng: -34.919923,
@@ -34,7 +34,7 @@
       morada2: "Jaboatão dos Guararapes - PE",
       codPostal: "54310-610" // não colocar virgula no último item de cada marcador
    }
-  ];
+  ];*/
 
 
   //Função que monta todas as posições dos marcadores do mapa
@@ -86,7 +86,7 @@
                             '<span style="color:blue; text-transform: uppercase;"><i class="fire icon big"></i><b>'+nome+'</b></span>' + 
                         '</div><br />' +
                         '<div class="iw_content">' + 
-                            '<i class="marker icon large"></i>'+morada1 + '' +
+                            '<i class="user icon large"></i>'+morada1 + '|' +
                             morada2 + '<br />' +
                             '<i class="tag icon large"></i>'+codPostal + '<br /><br /><br />' +
                             '<div class="ui positive right labeled icon button">' +

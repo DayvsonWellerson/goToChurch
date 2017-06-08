@@ -1,7 +1,7 @@
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
 	pageEncoding="ISO-8859-1"%>
 <%@ page
-	import="javax.servlet.http.HttpSession, java.util.List, basica.Usuario"%>
+	import="javax.servlet.http.HttpSession, java.util.List, basica.Usuario, basica.Congregacao"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -225,11 +225,81 @@ body {
 		<input type="hidden" id="txtLatitude" name="txtLatitude" /> <input
 			type="hidden" id="txtLongitude" name="txtLongitude" />
 	</div>
-
-
-	<script src="js/mapa.js"></script>
+	<!--<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCH-hCASkACK5o5MLSuYUKkat8jPKsMiOg&amp;sensor=false"></script>-->
 	<script
 		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCH-hCASkACK5o5MLSuYUKkat8jPKsMiOg&callback=initialize"></script>
+	<script>
+	var geocoder = new google.maps.Geocoder();
+	var markersData = [];
+	<% if(sessaoMapa.getAttribute("listaCongregacao") != null){
+		List<Congregacao> lic = (List<Congregacao>) sessaoMapa.getAttribute("listaCongregacao");
+		for(int i=0;i<lic.size();i++){
+	%>
+	
+	//function carregarNoMapa(endereco) {
+        geocoder.geocode({ 'address': <%out.print("'"+lic.get(i).getEndereco().getBairro()+", "+lic.get(i).getEndereco().getNumero()+", "+lic.get(i).getEndereco().getCidade()+"'");%> + ', Brasil', 'region': 'BR' }, function (results, status) {
+            if (status == google.maps.GeocoderStatus.OK) {
+                if (results[0]) {
+                    var latitude = results[0].geometry.location.lat();
+                    var longitude = results[0].geometry.location.lng();
+ 					
+                    var json = {
+          		      lat: latitude, 
+          		      lng: longitude,
+          		      nome: <%out.print("'"+lic.get(i).getNome()+"'");%>,
+          		      morada1:<%out.print("'Coordenador: "+lic.get(i).getCoordenador()+"'");%>,
+          		      morada2: <%out.print("'Coordenador: "+lic.get(i).getQtdAssentos()+"'");%>,
+          		      codPostal: ""+results[0].formatted_address // não colocar virgula no último item de cada marcador
+          		   };
+                    
+                    markersData.push(json);
+                    
+                    
+                    /*$('#txtEndereco').val(results[0].formatted_address);
+                    $('#txtLatitude').val(latitude);
+                    $('#txtLongitude').val(longitude);*/
+ 
+                    var location = new google.maps.LatLng(latitude, longitude);
+                    marker.setPosition(location);
+                    map.setCenter(location);
+                    map.setZoom(16);
+                }
+            }
+        });
+    //}
+	<%}
+	}else{%>
+	var markersData = [
+		  {
+		      lat: -8.151265, 
+		      lng: -34.919923,
+		      nome: "Faculdade Unibratec",
+		      morada1:"Rua Diogo Cão, 125",
+		      morada2: "Praia da Barra",
+		      codPostal: "3830-772 Gafanha da Nazaré" // não colocar virgula no último item de cada marcador
+		   },
+		   {
+		      lat: -8.152520,
+		      lng: -34.920258,
+		      nome: "Concessionária Chevrolet Autonunes",
+		      morada1:"Estr. da Batalha, 1000 - Guararapes",
+		      morada2: "Jaboatão dos Guararapes - PE",
+		      codPostal: "54325-035" // não colocar virgula no último item de cada marcador
+		   }, 
+		   {
+		      lat: -8.154067,
+		      lng: -34.920172,
+		      nome: "Estação Monte dos Guararapes",
+		      morada1:"Av. Zequinha Barreto - Prazeres",
+		      morada2: "Jaboatão dos Guararapes - PE",
+		      codPostal: "54310-610" // não colocar virgula no último item de cada marcador
+		   }
+		  ];
+	<%}%>
+	</script>
+	<script src="js/mapa.js"></script>
+	<!--<script
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCH-hCASkACK5o5MLSuYUKkat8jPKsMiOg&callback=initialize"></script>-->
 
 
 
