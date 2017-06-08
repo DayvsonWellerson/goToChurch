@@ -110,11 +110,11 @@ body {
 			<div class="ui simple dropdown item">
 				Opções <i class="dropdown icon"></i>
 				<div class="menu">
-					<a class="item" href="cadastro.jsp">Cadastrar-se</a> <a
-						class="item" href="#">Entrar</a>
 					<%
 						if (adm) {
 					%>
+					<a class="item" href="cadastro.jsp">Cadastrar Usuario</a>
+					
 					<div class="divider"></div>
 					<div class="header">ADMIN</div>
 					<div class="item">
@@ -136,10 +136,11 @@ body {
 							<a class="item" href="#">Obreiro</a>
 						</div>
 					</div>
-					<a class="item" href="#">Opções Gerais</a>
+					<a class="item" href="Logout">Sair</a>
 					<%
 						}
 					%>
+					
 				</div>
 			</div>
 		</div>
@@ -226,78 +227,104 @@ body {
 			type="hidden" id="txtLongitude" name="txtLongitude" />
 	</div>
 	<!--<script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?key=AIzaSyCH-hCASkACK5o5MLSuYUKkat8jPKsMiOg&amp;sensor=false"></script>-->
-	<script
-		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCH-hCASkACK5o5MLSuYUKkat8jPKsMiOg&callback=initialize"></script>
-	<script>
-	var geocoder = new google.maps.Geocoder();
-	var markersData = [];
-	<% if(sessaoMapa.getAttribute("listaCongregacao") != null){
-		List<Congregacao> lic = (List<Congregacao>) sessaoMapa.getAttribute("listaCongregacao");
-		for(int i=0;i<lic.size();i++){
-	%>
+	<div id="sc1">
+	<!-- <script 
+		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCH-hCASkACK5o5MLSuYUKkat8jPKsMiOg"></script> -->
 	
-	//function carregarNoMapa(endereco) {
-        geocoder.geocode({ 'address': <%out.print("'"+lic.get(i).getEndereco().getBairro()+", "+lic.get(i).getEndereco().getNumero()+", "+lic.get(i).getEndereco().getCidade()+"'");%> + ', Brasil', 'region': 'BR' }, function (results, status) {
-            if (status == google.maps.GeocoderStatus.OK) {
-                if (results[0]) {
-                    var latitude = results[0].geometry.location.lat();
-                    var longitude = results[0].geometry.location.lng();
- 					
-                    var json = {
-          		      lat: latitude, 
-          		      lng: longitude,
-          		      nome: <%out.print("'"+lic.get(i).getNome()+"'");%>,
-          		      morada1:<%out.print("'Coordenador: "+lic.get(i).getCoordenador()+"'");%>,
-          		      morada2: <%out.print("'Coordenador: "+lic.get(i).getQtdAssentos()+"'");%>,
-          		      codPostal: ""+results[0].formatted_address // não colocar virgula no último item de cada marcador
-          		   };
-                    
-                    markersData.push(json);
-                    
-                    
-                    /*$('#txtEndereco').val(results[0].formatted_address);
-                    $('#txtLatitude').val(latitude);
-                    $('#txtLongitude').val(longitude);*/
- 
-                    var location = new google.maps.LatLng(latitude, longitude);
-                    marker.setPosition(location);
-                    map.setCenter(location);
-                    map.setZoom(16);
-                }
-            }
-        });
-    //}
-	<%}
-	}else{%>
-	var markersData = [
-		  {
-		      lat: -8.151265, 
-		      lng: -34.919923,
-		      nome: "Faculdade Unibratec",
-		      morada1:"Rua Diogo Cão, 125",
-		      morada2: "Praia da Barra",
-		      codPostal: "3830-772 Gafanha da Nazaré" // não colocar virgula no último item de cada marcador
-		   },
-		   {
-		      lat: -8.152520,
-		      lng: -34.920258,
-		      nome: "Concessionária Chevrolet Autonunes",
-		      morada1:"Estr. da Batalha, 1000 - Guararapes",
-		      morada2: "Jaboatão dos Guararapes - PE",
-		      codPostal: "54325-035" // não colocar virgula no último item de cada marcador
-		   }, 
-		   {
-		      lat: -8.154067,
-		      lng: -34.920172,
-		      nome: "Estação Monte dos Guararapes",
-		      morada1:"Av. Zequinha Barreto - Prazeres",
-		      morada2: "Jaboatão dos Guararapes - PE",
-		      codPostal: "54310-610" // não colocar virgula no último item de cada marcador
-		   }
-		  ];
-	<%}%>
+	</div>
+	
+	
+	<script>
+		
+		var marker;
+		var markersData = [];
+		
+		function teste(tam){
+			if(markersData.length == tam){
+				var mapOptions = {
+					      //center: new google.maps.LatLng(-8.151265, -34.919923),
+					      zoom: 17,
+					      mapTypeId: 'roadmap',
+					   	};
+
+					   map = new google.maps.Map(document.getElementById('mapa'), mapOptions);
+
+					   // Cria a nova Info Window com referência à variável infoWindow.
+					   // O conteúdo da Info Window é criado na função createMarker.
+					   infoWindow = new google.maps.InfoWindow();
+
+					   // Evento que fecha a infoWindow com click no mapa.
+					   google.maps.event.addListener(map, 'click', function() {
+					      infoWindow.close();
+					   });
+					   console.log('Iniciar');
+					   // Chamada para a função que vai percorrer a informação
+					   // contida na variável markersData e criar os marcadores a mostrar no mapa
+					   displayMarkers();
+
+			}}
+		
+		function carregarNoMapa(endereco, nome, coordenador, qtd, tam) {
+	        geocoder.geocode({ 'address': endereco + ', Brasil', 'region': 'BR' }, function (results, status) {
+	            if (status == google.maps.GeocoderStatus.OK) {
+	                if (results[0]) {
+	                    var latitude = results[0].geometry.location.lat();
+	                    var longitude = results[0].geometry.location.lng();
+	 					
+	                    var json = {
+	          		      lat: latitude, 
+	          		      lng: longitude,
+	          		      nome: nome,
+	          		      morada1:coordenador,
+	          		      morada2: qtd,
+	          		      codPostal: ""+results[0].formatted_address // não colocar virgula no último item de cada marcador
+	          		   };
+	                    
+	                    markersData.push(json);
+	                    
+	                    teste(tam);
+	                    
+	                    console.log(markersData);
+	                }
+	            }
+	        });
+	        
+	    }	
 	</script>
 	<script src="js/mapa.js"></script>
+	
+	<script>
+	var geocoder;
+		function initialize() {
+			geocoder = new google.maps.Geocoder();
+			<%
+			boolean ok = false;
+			if(sessaoMapa.getAttribute("listaCongregacao") != null){
+				
+				List<Congregacao> lic = (List<Congregacao>) sessaoMapa.getAttribute("listaCongregacao");
+				out.print("var lctam = "+lic.size());
+				for(int i=0;i<lic.size();i++){
+			%>
+				carregarNoMapa(<%out.print("'"+lic.get(i).getEndereco().getBairro()+", "+lic.get(i).getEndereco().getNumero()+", "+lic.get(i).getEndereco().getCidade()+"', '"+lic.get(i).getNome()+"', '"+lic.get(i).getCoordenador()+"', '"+lic.get(i).getQtdAssentos()+"', "+lic.size());%>);
+				console.log(markersData.length);
+				
+			<%}
+			ok = true;
+			out.print("teste("+lic.size()+");");
+			%>
+			<%}%>
+			console.log('Array');
+
+		  }
+		
+	</script>
+	<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCH-hCASkACK5o5MLSuYUKkat8jPKsMiOg&callback=initialize"></script>
+	
+	
+	
+	<script>
+	
+	</script>
 	<!--<script
 		src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCH-hCASkACK5o5MLSuYUKkat8jPKsMiOg&callback=initialize"></script>-->
 
